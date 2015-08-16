@@ -3,9 +3,9 @@ python:
   - '2.7'
   - '2.6'
 script: 
-  - py.test -q QQBot.py
+  - py.test -q QLiker.py
 after_script:
-  - nohup python QQBot.py >qbot.log&
+  - nohup python QLiker.py >qbot.log&
   - sleep 60s
   - cat qbot.log
   - cat log.log
