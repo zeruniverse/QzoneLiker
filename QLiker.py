@@ -28,7 +28,7 @@ QzoneLoginUrl = 'http://xui.ptlogin2.qq.com/cgi-bin/xlogin?proxy_url=http%3A//qz
 initTime = time.time()
 
 
-logging.basicConfig(filename='log.log', level=logging.DEBUG, format='%(asctime)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
+logging.basicConfig(filename='log.txt', level=logging.ERROR, format='%(asctime)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
 
 def getAbstime():
     return int(time.time())
@@ -67,6 +67,7 @@ class Login(HttpClient):
             T = T + 1
             self.Download('http://ptlogin2.qq.com/ptqrshow?appid=549000912&e=2&l=M&s=3&d=72&v=4&daid=5', self.VPath)
             LoginSig = self.getCookie('pt_login_sig')
+            print "Please scan v.jpg (QR Code) in the folder with QQ or QQ security center in your mobile phone\n"
             logging.info('[{0}] Get QRCode Picture Success.'.format(T))           
             while True:
                 html = self.Get('http://ptlogin2.qq.com/ptqrlogin?u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-{0}&js_ver=10131&js_type=1&login_sig={1}&pt_uistyle=32&aid=549000912&daid=5&pt_qzone_sig=1'.format(date_to_millis(datetime.datetime.utcnow()) - StarTime, LoginSig), QzoneLoginUrl)
@@ -93,7 +94,7 @@ class Login(HttpClient):
         UIN = getReValue(ret[5], r'uin=([0-9]+?)&', 'Fail to get QQ number', 1)
         Referer = Referer+str(UIN)
         skey = self.getCookie('skey')
-
+        print "Successfully Login! Now you can just leave the program here alone."
 # -----------------
 # 计算g_tk
 # -----------------  
@@ -160,6 +161,7 @@ def MsgHandler():
             if abstime is None:
                 continue
             like(btn_string.group(1),btn_string.group(2),fkey[i],abstime.group(1))
+            print '已点赞'+btn_string.group(2)+"\n"
             logging.info('已点赞'+btn_string.group(2))
         except Exception, e:
             logging.error(str(e))
@@ -175,7 +177,9 @@ if __name__ == "__main__":
         vpath = sys.argv[1]
     if len(sys.argv) > 2:
         qq = sys.argv[2]
-
+    print "QzoneLiker 1.1 By Jeffery"
+    print "Log files will be recorded to log.txt in the same folder as this executable file"
+    print "By default, the program checks Qzone every 3 minutes. If you want to modify, please download the master-branch"
     try:
         qqLogin = Login(vpath, qq)
     except Exception, e:
