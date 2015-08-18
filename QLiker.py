@@ -16,7 +16,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 # CONFIGURATION FIELD
-checkFrequency = 5
+checkFrequency = 30
 #check every k seconds
 # STOP EDITING HERE
 HttpClient_Ist = HttpClient()
@@ -78,7 +78,6 @@ class Login(HttpClient):
             if ret[1] == '0' or T > self.MaxTryTime:
                 break
 
-        logging.info(ret)
         if ret[1] != '0':
             return
         logging.critical("二维码已扫描，正在登陆")
@@ -126,12 +125,12 @@ def getGTK(skey):
 # LIKE
 # ----------------- 
 def like(unikey,curkey,dataid,time):
-    reqURL = 'http://w.qzone.qq.com/cgi-bin/likes/internal_dolike_app?g_tk='+getGTK(skey)
+    reqURL = 'http://w.qzone.qq.com/cgi-bin/likes/internal_dolike_app?g_tk='+str(getGTK(skey))
     data = (
             ('qzreferrer', Referer),
             ('opuin', UIN),
-            ('unikey', unikey),
-            ('curkey', curkey),
+            ('unikey', str(unikey)),
+            ('curkey', str(curkey)),
             ('from', '1'),
             ('appid', '311'),
             ('typeid', '0'),
@@ -141,7 +140,7 @@ def like(unikey,curkey,dataid,time):
             ('fupdate', '1')
         )
     rsp = HttpClient_Ist.Post(reqURL, data, Referer)
-    getReValue(rsp, r'"code":(0)', 'Fail to like unikey='+str(unikey)+';curkey='+str(curkey)+';fid='+str(fid), 0)
+    getReValue(rsp, r'"code":(0)', 'Fail to like unikey='+str(unikey)+';curkey='+str(curkey)+';fid='+str(dataid), 0)
 
 # -----------------
 # 主函数
@@ -161,6 +160,7 @@ def MsgHandler():
             if abstime is None:
                 continue
             like(btn_string.group(1),btn_string.group(2),fkey[i],abstime.group(1))
+            logging.info('已点赞'+btn_string.group(2))
         except Exception, e:
             logging.error(str(e))
 
