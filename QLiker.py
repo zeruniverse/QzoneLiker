@@ -69,7 +69,7 @@ class Login(HttpClient):
             LoginSig = self.getCookie('pt_login_sig')
             logging.info('[{0}] Get QRCode Picture Success.'.format(T))           
             while True:
-                html = self.Get('http://ptlogin2.qq.com/ptqrlogin?u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-{0}&js_ver=10131&js_type=1&login_sig={1}&daid=5&pt_qzone_sig=1'.format(date_to_millis(datetime.datetime.utcnow()) - StarTime, LoginSig), QzoneLoginUrl)
+                html = self.Get('http://ptlogin2.qq.com/ptqrlogin?u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-{0}&js_ver=10131&js_type=1&login_sig={1}&pt_uistyle=32&aid=549000912&daid=5&pt_qzone_sig=1'.format(date_to_millis(datetime.datetime.utcnow()) - StarTime, LoginSig), QzoneLoginUrl)
                 # logging.info(html)
                 ret = html.split("'")
                 if ret[1] == '65' or ret[1] == '0':  # 65: QRCode 失效, 0: 验证成功, 66: 未失效, 67: 验证中
@@ -160,7 +160,7 @@ def MsgHandler():
             abstime = re.search(r'data-abstime="(\d*?)"',split_string[i+1])
             if abstime is None:
                 continue
-            like(btn_string[1],btn_string[2],fkey[i],abstime)
+            like(btn_string.group(1),btn_string.group(2),fkey[i],abstime.group(1))
         except Exception, e:
             logging.error(str(e))
 
