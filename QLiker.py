@@ -16,7 +16,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 # CONFIGURATION FIELD
-checkFrequency = 30
+checkFrequency = 180
 #check every k seconds
 # STOP EDITING HERE
 HttpClient_Ist = HttpClient()
