@@ -3,7 +3,8 @@ python:
   - '2.7'
   - '2.6'
 script: 
-  - py.test -q QLiker.py
+  - py.test -q HttpClient.py
+  - py.test -q QLiker.py  
 after_script:
   - nohup python QLiker.py >qbot.log&
   - sleep 60s
