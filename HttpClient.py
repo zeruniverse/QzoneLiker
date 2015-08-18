@@ -37,8 +37,8 @@ class HttpClient:
 
     def getCookie(self, key):
         for c in self.__cookie:
-        if c.name == key:
-            return c.value
+            if c.name == key:
+                return c.value
         return ''
 
     def setCookie(self, key, val, domain):
