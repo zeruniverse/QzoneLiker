@@ -142,54 +142,28 @@ def like(unikey,curkey,dataid,time):
         )
     rsp = HttpClient_Ist.Post(reqURL, data, Referer)
     getReValue(rsp, r'"code":(0)', 'Fail to like unikey='+str(unikey)+';curkey='+str(curkey)+';fid='+str(fid), 0)
-  ####TODO      
-    def MsgHandler(tuin, content, isSess, group_sig, service_type):
-    <a class="item qz_like_btn_v3" data-islike="0" data-likecnt="4" data-showcount="4" data-unikey="http://user.qzone.qq.com/1373652504/batchphoto/V1491p9K2ny9m7/1439737846511" data-curkey="http://user.qzone.qq.com/1373652504/batchphoto/V1491p9K2ny9m7/1439737846511" data-clicklog="like" href="javascript:;"><i class="ui-icon icon-praise"></i>赞(4)</a>
 
+# -----------------
+# 主函数
+# ----------------- 
+def MsgHandler():
     html=HttpClient_Ist.Get(Referer,Referer)
-    if isSess == 0:
-        reqURL = "http://d.web2.qq.com/channel/send_buddy_msg2"
-        data = (
-            ('qzreferrer', Referer),
-            ('opuin', UIN),
-            ('unikey', Referer),
-            ('qzreferrer', Referer),
-            ('clientid', ClientID),
-            ('psessionid', PSessionID)
-        )
-        rsp = HttpClient_Ist.Post(reqURL, data, Referer)
-        rspp = json.loads(rsp)
-        if rspp['retcode']!= 0:
-            logging.error("reply pmchat error"+str(rspp['retcode']))
-    
-
-
-
-
-
-        if time.time() - self.lastreplytime < 3.0:
-            logging.info("REPLY TOO FAST, ABANDON："+content)
-            return False
-        self.lastreplytime = time.time()
-        reqURL = "http://d.web2.qq.com/channel/send_qun_msg2"
-        data = (
-            ('r', '{{"group_uin":{0}, "face":564,"content":"[\\"{4}\\",[\\"font\\",{{\\"name\\":\\"Arial\\",\\"size\\":\\"10\\",\\"style\\":[0,0,0],\\"color\\":\\"000000\\"}}]]","clientid":"{1}","msg_id":{2},"psessionid":"{3}"}}'.format(self.guin, ClientID, msgId, PSessionID, str(content.replace("\\", "\\\\\\\\").replace("\n", "\\\\n").replace("\t", "\\\\t")).decode("utf-8"))),
-            ('clientid', ClientID),
-            ('psessionid', PSessionID)
-        )
-        logging.info("Reply package: " + str(data))
-        rsp = HttpClient_Ist.Post(reqURL, data, Referer)
+    fkey=re.findall(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=.*?" data-iswupfeed=".*?" data-key="(.*?)" data-specialtype=.*?" data-extend-info=".*?">',html)
+    if fkey is None:
+        raise Exception, 'Fail to find any feeds'
+    split_string=re.split(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=.*?" data-iswupfeed=".*?" data-key=".*?" data-specialtype=.*?" data-extend-info=".*?">',html)
+    for i in range (0,len(fkey)):
         try:
-            rspp = json.loads(rsp)
-            if rspp['retcode'] == 0:         
-                logging.info("[Reply to group " + str(self.gid) + "]:" + str(content))
-                return True
-        except:
-            pass
-        logging.error("[Fail to reply group " + str(self.gid)+ "]:" + str(rsp))
-        return rsp
+            btn_string = re.search(r'<a class="item qz_like_btn_v3" data-islike="0" data-likecnt=".*?" data-showcount=".*?" data-unikey="(.*?)" data-curkey="(.*?)" data-clicklog="like" href="javascript:;">', split_string[i+1])
+            if btn_string is None:
+                continue
+            abstime = re.search(r'data-abstime="(\d*?)"',split_string[i+1])
+            if abstime is None:
+                continue
+            like(btn_string[1],btn_string[2],fkey[i],abstime)
+        except Exception, e:
+            logging.error(str(e))
 
-  
 # -----------------
 # 主程序
 # -----------------
@@ -207,16 +181,14 @@ if __name__ == "__main__":
     except Exception, e:
         logging.critical(str(e))
         os._exit()
-    t_check = check_msg()
-    t_check.setDaemon(True)
-    t_check.start()
-    try:        
-        with open('groupfollow.txt','r') as f:
-            for line in f:
-                GroupWatchList += line.strip('\n').split(',')
-            logging.info("关注:"+str(GroupWatchList))
-    except Exception, e:
-        logging.error("读取组存档出错:"+str(e))
-            
-                
-    t_check.join()
+    errtime=0
+    while True:
+        try:
+            if errtime > 5:
+                break
+            MsgHandler()
+            time.sleep(checkFrequency)
+            errtime = 0
+        except Exception, e:
+            logging.error(str(e))
+            errtime = errtime + 1
