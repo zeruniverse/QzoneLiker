@@ -1,3 +1,4 @@
+# HttpClient.py is written by [xqin]: https://github.com/xqin/SmartQQ-for-Raspberry-Pi
 import cookielib, urllib, urllib2
 
 class HttpClient:
