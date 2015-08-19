@@ -7,7 +7,7 @@ QQ空间点赞机，成为秒赞小王子~！
 
 ##RELEASE  
 Python Version: [https://github.com/zeruniverse/QzoneLiker/releases/tag/1.1](https://github.com/zeruniverse/QzoneLiker/releases/tag/1.1)  
-Windows Version: [https://github.com/zeruniverse/QzoneLiker/releases/tag/w1.1](https://github.com/zeruniverse/QzoneLiker/releases/tag/w1.1)  
+Windows Version (32位exe): [https://github.com/zeruniverse/QzoneLiker/releases/tag/w1.1](https://github.com/zeruniverse/QzoneLiker/releases/tag/w1.1)  
 
 ##如何使用  
 + 下载后使用Python2运行QLiker.py 
