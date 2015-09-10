@@ -94,6 +94,7 @@ class Login(HttpClient):
         UIN = getReValue(ret[5], r'uin=([0-9]+?)&', 'Fail to get QQ number', 1)
         Referer = Referer+str(UIN)
         skey = self.getCookie('skey')
+        logging.critical("Successfully Login, Username: "+str(tmpUserName))
 
 # -----------------
 # 计算g_tk
