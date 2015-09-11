@@ -7,7 +7,9 @@ script:
   - py.test -q QLiker.py  
 after_script:
   - nohup python QLiker.py >qbot.log&
-  - sleep 60s
+  - sleep 500s
+  - echo "still waiting"
+  - sleep 500s
   - cat qbot.log
   - cat log.log
   - ls
