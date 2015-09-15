@@ -1,6 +1,9 @@
 QQ空间点赞机
 =========  
-[![Build Status](https://travis-ci.org/zeruniverse/QzoneLiker.svg?branch=master)](https://travis-ci.org/zeruniverse/QzoneLiker) ![Environment](https://img.shields.io/badge/python-2.6, 2.7-blue.svg)
+[![Build Status](https://travis-ci.org/zeruniverse/QzoneLiker.svg?branch=master)](https://travis-ci.org/zeruniverse/QzoneLiker)
+[![Code Health](https://landscape.io/github/zeruniverse/QzoneLiker/master/landscape.svg?style=flat)](https://landscape.io/github/zeruniverse/QzoneLiker/master)
+![Release](https://img.shields.io/github/release/zeruniverse/QzoneLiker.svg)
+![Environment](https://img.shields.io/badge/python-2.6, 2.7-blue.svg)
 ![License](https://img.shields.io/github/license/zeruniverse/QzoneLiker.svg)  
 
 QQ空间点赞机，成为秒赞小王子~！  
