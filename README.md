@@ -8,6 +8,7 @@ QQ空间点赞机
 ![License](https://img.shields.io/github/license/zeruniverse/QzoneLiker.svg)  
 
 QQ空间点赞机，成为秒赞小王子~！  
+注意：由于TX经常更改协议，如果RELEASE中最新版无法使用，请尝试MASTER分支。  
 
 ##RELEASE  
 Python Version: [https://github.com/zeruniverse/QzoneLiker/releases/tag/1.3.1](https://github.com/zeruniverse/QzoneLiker/releases/tag/1.3.1)  
