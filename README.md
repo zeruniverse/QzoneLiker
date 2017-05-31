@@ -11,15 +11,16 @@ QQ空间点赞机，成为秒赞小王子~！
 注意：由于TX经常更改协议，如果RELEASE中最新版无法使用，请尝试MASTER分支。  
 
 ## RELEASE  
-Python Version: [https://github.com/zeruniverse/QzoneLiker/releases/tag/1.3.3](https://github.com/zeruniverse/QzoneLiker/releases/tag/1.3.3)  
+Python Version: [DOWNLOAD](https://github.com/zeruniverse/QzoneLiker/releases/latest)  
 ~~Windows Version (32位exe): [https://github.com/zeruniverse/QzoneLiker/releases/tag/w1.1](https://github.com/zeruniverse/QzoneLiker/releases/tag/w1.1)~~  
 Windows版已停止更新，请Windows用户使用技术门槛更低的网页版[QBotWrap](https://github.com/zeruniverse/QBotWebWrap)  
   
 ## 如何使用  
++ 安装`PyExecJS`: `pip2 install PyExecJS`
 + 下载后使用Python2运行QLiker.py 
 + ```nohup python2 QLiker.py >qliker.log&```  
 + ```ls```, 直到出现v.png  
-+ 下载v.png,使用手机QQ安全中心扫描登陆  
++ 下载v.png,使用手机QQ扫描登陆  
 + 如需更改默认刷新频率，请更改代码第19行（默认180秒，刷新太快网页空间会被封，直接显示为403）  
   
 ## 功能   
