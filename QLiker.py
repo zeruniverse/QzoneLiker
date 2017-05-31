@@ -158,15 +158,17 @@ def like(unikey,curkey,dataid,time,qztoken):
 # ----------------- 
 def MsgHandler():
     html=HttpClient_Ist.Get(Referer,Referer)
-    fkey=re.findall(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=.*?" data-iswupfeed=".*?" data-key="(.*?)" data-specialtype=.*?" data-extend-info=".*?">',html)
+    fkey=re.findall(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=".*?" data-iswupfeed=".*?" data-key="(.*?)" data-specialtype=".*?" data-extend-info=".*?"',html)
     if not fkey:
         raise Exception, 'Fail to find any feeds'
-    g_qzonetoken=re.search(r'window\.g_qzonetoken = \(function\(\)\{ try\{return (.*+);\} catch(e) ',html)
-    qztoken=execjs.eval(g_qzonetoken)
-    split_string=re.split(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=.*?" data-iswupfeed=".*?" data-key=".*?" data-specialtype=.*?" data-extend-info=".*?">',html)
+    g_qzonetoken=re.search(r'window\.g_qzonetoken = \(function\(\)\{ try\{return (.*?);\} catch\(e\)',html)
+    g_qzonetoken=g_qzonetoken.group(1)
+    ctx = execjs.compile('function qz(){location = "./"; return '+g_qzonetoken+'}')
+    qztoken=str(ctx.call("qz"))
+    split_string=re.split(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=".*?" data-iswupfeed=".*?" data-key=".*?" data-specialtype=".*?" data-extend-info=".*?"',html)
     for i in range (0,len(fkey)):
         try:
-            btn_string = re.search(r'<a class="item qz_like_btn_v3" data-islike="0" data-likecnt=".*?" data-showcount=".*?" data-unikey="(.*?)" data-curkey="(.*?)" data-clicklog="like" href="javascript:;">', split_string[i+1])
+            btn_string = re.search(r'<a class="item qz_like_btn_v3.*?" data-islike="0" data-likecnt=".*?" data-showcount=".*?" data-unikey="(.*?)" data-curkey="(.*?)" data-clicklog="like" href="javascript:;">', split_string[i+1])
             if btn_string is None:
                 continue
             abstime = re.search(r'data-abstime="(\d*?)"',split_string[i+1])
