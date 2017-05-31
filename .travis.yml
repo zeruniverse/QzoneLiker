@@ -1,7 +1,6 @@
 language: python
 python:
   - '2.7'
-  - '2.6'
 script: 
   - pip install PyExecJS
   - py.test -q HttpClient.py
