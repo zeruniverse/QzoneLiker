@@ -9,6 +9,7 @@ import datetime
 import time
 import threading
 import logging
+import execjs
 import urllib
 from HttpClient import HttpClient
 
@@ -22,8 +23,8 @@ checkFrequency = 180
 HttpClient_Ist = HttpClient()
 UIN = 0
 skey = ''
-Referer = 'http://user.qzone.qq.com/'
-QzoneLoginUrl = 'http://xui.ptlogin2.qq.com/cgi-bin/xlogin?proxy_url=http%3A//qzs.qq.com/qzone/v6/portal/proxy.html&daid=5&pt_qzone_sig=1&hide_title_bar=1&low_login=0&qlogin_auto_login=1&no_verifyimg=1&link_target=blank&appid=549000912&style=22&target=self&s_url=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&pt_qr_app=%E6%89%8B%E6%9C%BAQQ%E7%A9%BA%E9%97%B4&pt_qr_link=http%3A//z.qzone.com/download.html&self_regurl=http%3A//qzs.qq.com/qzone/v6/reg/index.html&pt_qr_help_link=http%3A//z.qzone.com/download.html'
+Referer = 'https://user.qzone.qq.com/'
+QzoneLoginUrl = 'https://xui.ptlogin2.qq.com/cgi-bin/xlogin?proxy_url=https%3A//qzs.qq.com/qzone/v6/portal/proxy.html&daid=5&&hide_title_bar=1&low_login=0&qlogin_auto_login=1&no_verifyimg=1&link_target=blank&appid=549000912&style=22&target=self&s_url=https%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&pt_qr_app=%E6%89%8B%E6%9C%BAQQ%E7%A9%BA%E9%97%B4&pt_qr_link=https%3A//z.qzone.com/download.html&self_regurl=https%3A//qzs.qq.com/qzone/v6/reg/index.html&pt_qr_help_link=https%3A//z.qzone.com/download.html&pt_no_auth=0'
 
 initTime = time.time()
 
@@ -47,6 +48,12 @@ def getReValue(html, rex, er, ex):
         return ''
 
     return v.group(1)
+
+def getQRtoken(qrsig):
+    e = 0
+    for i in qrsig:
+        e += (e << 5) + ord(i)
+    return 2147483647 & e;
     
 # -----------------
 # 登陆
@@ -60,16 +67,18 @@ class Login(HttpClient):
         AdminQQ = int(qq)
         logging.critical("正在获取登陆页面")
         self.setCookie('_qz_referrer','qzone.qq.com','qq.com')
-        self.Get(QzoneLoginUrl,'http://qzone.qq.com/')
+        self.Get(QzoneLoginUrl,'https://qzone.qq.com/')
         StarTime = date_to_millis(datetime.datetime.utcnow())
         T = 0
         while True:
             T = T + 1
-            self.Download('http://ptlogin2.qq.com/ptqrshow?appid=549000912&e=2&l=M&s=3&d=72&v=4&daid=5', self.VPath)
+
+            self.Download('https://ssl.ptlogin2.qq.com/ptqrshow?appid=549000912&e=2&l=M&s=3&d=72&v=4&t=0.{0}6252926{1}2285{2}86&daid=5'.format(random.randint(0,9),random.randint(0,9),random.randint(0,9)), self.VPath)
             LoginSig = self.getCookie('pt_login_sig')
+            QRSig = self.getCookie('qrsig')
             logging.info('[{0}] Get QRCode Picture Success.'.format(T))           
             while True:
-                html = self.Get('http://ptlogin2.qq.com/ptqrlogin?u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-{0}&js_ver=10131&js_type=1&login_sig={1}&pt_uistyle=32&aid=549000912&daid=5&pt_qzone_sig=1'.format(date_to_millis(datetime.datetime.utcnow()) - StarTime, LoginSig), QzoneLoginUrl)
+                html = self.Get('https://ssl.ptlogin2.qq.com/ptqrlogin?u1=https%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&ptqrtoken={0}&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-{1}&js_ver=10220&js_type=1&login_sig={2}&pt_uistyle=40&aid=549000912&daid=5&'.format(getQRtoken(QRSig),date_to_millis(datetime.datetime.utcnow()) - StarTime, LoginSig), QzoneLoginUrl)
                 # logging.info(html)
                 ret = html.split("'")
                 if ret[1] == '65' or ret[1] == '0':  # 65: QRCode 失效, 0: 验证成功, 66: 未失效, 67: 验证中
@@ -79,7 +88,7 @@ class Login(HttpClient):
                 break
 
         if ret[1] != '0':
-            raise ValueError, "RetCode = "+ret['retcode']
+            raise ValueError, "RetCode = "+ret[1]
             return
         logging.critical("二维码已扫描，正在登陆")
         
@@ -126,8 +135,8 @@ def getGTK(skey):
 # -----------------
 # LIKE
 # ----------------- 
-def like(unikey,curkey,dataid,time):
-    reqURL = 'http://w.qzone.qq.com/cgi-bin/likes/internal_dolike_app?g_tk='+str(getGTK(skey))
+def like(unikey,curkey,dataid,time,qztoken):
+    reqURL = 'https://h5.qzone.qq.com/proxy/domain/w.qzone.qq.com/cgi-bin/likes/internal_dolike_app?g_tk={0}&qzonetoken={1}'.format(str(getGTK(skey)),str(qztoken))
     data = (
             ('qzreferrer', Referer),
             ('opuin', UIN),
@@ -152,6 +161,8 @@ def MsgHandler():
     fkey=re.findall(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=.*?" data-iswupfeed=".*?" data-key="(.*?)" data-specialtype=.*?" data-extend-info=".*?">',html)
     if not fkey:
         raise Exception, 'Fail to find any feeds'
+    g_qzonetoken=re.search(r'window\.g_qzonetoken = \(function\(\)\{ try\{return (.*+);\} catch(e) ',html)
+    qztoken=execjs.eval(g_qzonetoken)
     split_string=re.split(r'<div class="f-item f-s-i" id=".*?" data-feedsflag=.*?" data-iswupfeed=".*?" data-key=".*?" data-specialtype=.*?" data-extend-info=".*?">',html)
     for i in range (0,len(fkey)):
         try:
@@ -161,7 +172,7 @@ def MsgHandler():
             abstime = re.search(r'data-abstime="(\d*?)"',split_string[i+1])
             if abstime is None:
                 continue
-            like(btn_string.group(1),btn_string.group(2),fkey[i],abstime.group(1))
+            like(btn_string.group(1),btn_string.group(2),fkey[i],abstime.group(1),qztoken)
             logging.info('已点赞'+btn_string.group(2))
         except Exception, e:
             logging.error(str(e))
