@@ -4,7 +4,7 @@ QQ空间点赞机
 [![Code Health](https://landscape.io/github/zeruniverse/QzoneLiker/master/landscape.svg?style=flat)](https://landscape.io/github/zeruniverse/QzoneLiker/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/b262232e4e204889902436d16f1e8cd3)](https://www.codacy.com/app/zzy8200/QzoneLiker)
 ![Release](https://img.shields.io/github/release/zeruniverse/QzoneLiker.svg)
-![Environment](https://img.shields.io/badge/python-2.6%2C%202.7-blue.svg)
+![Environment](https://img.shields.io/badge/python-2.7-blue.svg)
 ![License](https://img.shields.io/github/license/zeruniverse/QzoneLiker.svg)  
 
 QQ空间点赞机，成为秒赞小王子~！  
